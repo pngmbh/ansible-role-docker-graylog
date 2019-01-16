@@ -6,6 +6,9 @@
     - role: geerlingguy.pip
     - role: geerlingguy.docker
     - role: docker-graylog
+  # tasks:
+  # - name:
+  #   - log something
   vars:
     docker_package: "docker-{{ docker_edition }}"
     docker_package_version: "17.03.2.ce-1.el7.centos"
@@ -14,3 +17,5 @@
     pip_install_packages:
       - name: docker
       - name: docker-compose
+    docker_graylog_enable_web_host_port: true
+    docker_graylog_enable_gelf_udp_host_port: true

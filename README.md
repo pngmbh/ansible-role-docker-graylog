@@ -37,6 +37,7 @@ The following will install the server, and expose the webinterface to
     - role: docker-graylog
   vars:
     docker_graylog_enable_web_host_port: true
+    docker_graylog_enable_gelf_udp_host_port: true
 ```
 
 Logging to that graylog server from a docker container can then be done by

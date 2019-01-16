@@ -6,10 +6,14 @@
   with_items:
     - "{{ docker_graylog_directory }}"
 
-- name: Render gelf udp input config
+- name: Render templates
   template:
-    src: gelf-udp-input.json.j2
-    dest: "{{ docker_graylog_directory }}/gelf-udp-input.json"
+    src: "{{ item }}.j2"
+    dest: "{{ docker_graylog_directory }}/{{ item }}"
+  with_list:
+    - gelf-udp-input.json
+    - graylog.conf
+    - docker-compose.yml
 
 - name: Render docker-compose config
   template:
