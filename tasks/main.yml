@@ -1,0 +1,34 @@
+---
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ docker_graylog_directory }}"
+
+- name: Render gelf udp input config
+  template:
+    src: gelf-udp-input.json.j2
+    dest: "{{ docker_graylog_directory }}/gelf-udp-input.json"
+
+- name: Render docker-compose config
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ docker_graylog_directory }}/docker-compose.yml"
+
+- name: Pull Docker images
+  docker_image:
+    name: "{{ item.name }}"
+    tag: "{{ item.tag }}"
+  with_items:
+    - name: "{{ docker_graylog_image }}"
+      tag: "{{ docker_graylog_tag }}"
+    - name: "{{ docker_graylog_mongo_image }}"
+      tag: "{{ docker_graylog_mongo_tag }}"
+    - name: "{{ docker_graylog_es_image }}"
+      tag: "{{ docker_graylog_es_tag }}"
+
+- name: Start graylog
+  docker_service:
+    state: present
+    project_src: "{{ docker_graylog_directory }}"

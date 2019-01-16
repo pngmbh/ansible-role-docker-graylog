@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  description: role to install graylog for/via docker
+  license:
+    - BSD
+  min_ansible_version: 2.0
+  platforms:
+    - name: EL
+      versions:
+        - 7
+    - name: Ubuntu
+      versions:
+        - xenial
+  galaxy_tags: []
+
+dependencies: []

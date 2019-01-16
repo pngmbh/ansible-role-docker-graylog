@@ -1,0 +1,55 @@
+# {{ ansible_managed }}
+version: '2'
+services:
+  # MongoDB: https://hub.docker.com/_/mongo/
+  mongodb:
+    image: "{{ docker_graylog_mongo_image }}:{{ docker_graylog_mongo_tag }}"
+  # Elasticsearch: https://www.elastic.co/guide/en/elasticsearch/reference/6.x/docker.html
+  elasticsearch:
+    image: "{{ docker_graylog_es_image }}:{{ docker_graylog_es_tag}}"
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=localhost
+      - network.host=0.0.0.0
+      # Disable X-Pack security: https://www.elastic.co/guide/en/elasticsearch/reference/6.x/security-settings.html#general-security-settings
+      - xpack.security.enabled=false
+      - xpack.watcher.enabled=false
+      - xpack.monitoring.enabled=false
+      - xpack.security.audit.enabled=false
+      - xpack.ml.enabled=false
+      - xpack.graph.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    mem_limit: 1g
+  # Graylog: https://hub.docker.com/r/graylog/graylog/
+  graylog:
+    image: "{{ docker_graylog_image }}:{{ docker_graylog_tag }}"
+    environment:
+      - "GRAYLOG_PASSWORD_SECRET={{ docker_graylog_password_secret }}"
+      - "GRAYLOG_ROOT_PASSWORD_SHA2={{ docker_graylog_root_password | hash('sha256') }}"
+      - "GRAYLOG_WEB_ENDPOINT_URI=http://127.0.0.1:{{ docker_graylog_web_port }}/api"
+      - "GRAYLOG_CONTENT_PACKS_AUTO_LOAD=udp-input-graylog.json"
+      - "GRAYLOG_CONTENT_PACKS_LOADER_ENABLED=true"
+      - "GRAYLOG_CONTENT_PACKS_DIR=data/contentpacks"
+    links:
+      - mongodb:mongo
+      - elasticsearch
+    depends_on:
+      - mongodb
+      - elasticsearch
+{% if docker_graylog_enable_web_host_port or docker_graylog_enable_gelf_udp_host_port %}
+    ports:
+{% if docker_graylog_enable_web_host_port %}
+      # Graylog web interface and REST API
+      - 9000:9000
+{% endif %}
+      # Syslog TCP
+      # - 514:514
+      # Syslog UDP
+      # - 514:514/udp
+      # GELF TCP
+      # - 12201:12201
+{% if docker_graylog_enable_gelf_udp_host_port %}
+      # GELF UDP
+      - 12201:12201/udp
+{% endif %}
+{% endif %}

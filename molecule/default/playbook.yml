@@ -1,0 +1,16 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: geerlingguy.repo-epel
+    - role: geerlingguy.pip
+    - role: geerlingguy.docker
+    - role: docker-graylog
+  vars:
+    docker_package: "docker-{{ docker_edition }}"
+    docker_package_version: "17.03.2.ce-1.el7.centos"
+    docker_hosts:
+      - "unix:///var/run/docker.sock"
+    pip_install_packages:
+      - name: docker
+      - name: docker-compose
