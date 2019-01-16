@@ -24,12 +24,12 @@ services:
   graylog:
     image: "{{ docker_graylog_image }}:{{ docker_graylog_tag }}"
     environment:
-      - "GRAYLOG_PASSWORD_SECRET={{ docker_graylog_password_secret }}"
-      - "GRAYLOG_ROOT_PASSWORD_SHA2={{ docker_graylog_root_password | hash('sha256') }}"
-      - "GRAYLOG_WEB_ENDPOINT_URI=http://127.0.0.1:{{ docker_graylog_web_port }}/api"
-      - "GRAYLOG_CONTENT_PACKS_AUTO_LOAD=udp-input-graylog.json"
-      - "GRAYLOG_CONTENT_PACKS_LOADER_ENABLED=true"
-      - "GRAYLOG_CONTENT_PACKS_DIR=data/contentpacks"
+      - "GRAYLOG2_PASSWORD_SECRET={{ docker_graylog_password_secret }}"
+      - "GRAYLOG2_ROOT_PASSWORD_SHA2={{ docker_graylog_root_password | hash('sha256') }}"
+      - "GRAYLOG2_WEB_ENDPOINT_URI=http://127.0.0.1:{{ docker_graylog_web_port }}/api"
+      - "GRAYLOG2_CONTENT_PACKS_AUTO_LOAD=udp-input-graylog.json"
+      - "GRAYLOG2_CONTENT_PACKS_LOADER_ENABLED=true"
+      - "GRAYLOG2_CONTENT_PACKS_DIR=data/contentpacks"
     volumes:
       - "{{ docker_graylog_directory }}/udp-input-graylog.json:/usr/share/graylog/data/contentpacks/udp-input-graylog.json"
       - "{{ docker_graylog_directory }}/graylog.conf:/usr/share/graylog/data/config/graylog.conf"
