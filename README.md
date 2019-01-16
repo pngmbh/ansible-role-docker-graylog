@@ -7,7 +7,7 @@ as a collection of Docker containers, using docker-compose.
 Limitations
 -----------
 
-Currently, this only supports the `gelf` log input.
+Currently, this only supports the `gelf` log input via UDP.
 
 Requirements
 ------------
@@ -18,7 +18,7 @@ Requirements
 Role Variables
 --------------
 
-see [defaults/main.yml](defaults.main.yml)
+see [defaults/main.yml](defaults/main.yml)
 
 Dependencies
 ------------
@@ -29,7 +29,7 @@ Example Playbook
 ----------------
 
 The following will install the server, and expose the webinterface to
-`0.0.0.0:9000` on the host.
+`0.0.0.0:9000` on the host (login with `admin`/`admin`).
 
 ```yaml
 - hosts: servers
