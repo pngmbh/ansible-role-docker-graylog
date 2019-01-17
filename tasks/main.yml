@@ -36,3 +36,14 @@
   docker_service:
     state: present
     project_src: "{{ docker_graylog_directory }}"
+
+- name: Wait for graylog to become healthy
+  shell: |
+    docker ps -a --filter "label=org.label-schema.name=Graylog Docker Image" \
+                 --format {%raw%}"{{.Status}}"{%endraw%} \
+      | grep -q '(healthy)'
+  register: healthy
+  until: healthy.rc == 0
+  delay: 5
+  retries: 20
+  changed_when: false
