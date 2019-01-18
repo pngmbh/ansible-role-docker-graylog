@@ -47,3 +47,33 @@
   delay: 5
   retries: 20
   changed_when: false
+
+- name: configure LDAP authentication
+  when: docker_graylog_enable_ldap
+  # This done from inside the graylog container just so that it works even when
+  # the graylog api isn't published on a host port
+  raw: '
+    docker exec -i docker-graylog_graylog_1
+    curl --fail -s -X PUT
+    -H ''Content-Type: application/json''
+    -H ''X-Requested-By: cli''
+    -d ''{
+    "enabled": true,
+    "system_username": {{ docker_graylog_ldap_system_username | to_json }},
+    "system_password": {{ docker_graylog_ldap_system_password | to_json }},
+    "ldap_uri": {{ docker_graylog_ldap_uri | to_json }},
+    "use_start_tls": {{ docker_graylog_ldap_use_start_tls | to_json }},
+    "trust_all_certificates": {{ docker_graylog_ldap_trust_all_certificates | to_json }},
+    "active_directory": {{ docker_graylog_ldap_active_directory | to_json }},
+    "search_base": {{ docker_graylog_ldap_search_base | to_json }},
+    "search_pattern": {{ docker_graylog_ldap_search_pattern | to_json }},
+    "display_name_attribute": {{ docker_graylog_ldap_display_name_attribute | to_json }},
+    "default_group": {{ docker_graylog_ldap_default_group | to_json }},
+    "group_mapping": {{ docker_graylog_ldap_group_mapping | to_json }},
+    "group_search_base": {{ docker_graylog_ldap_group_search_base | to_json }},
+    "group_id_attribute": {{ docker_graylog_ldap_group_id_attribute | to_json }},
+    "additional_default_groups": {{ docker_graylog_ldap_additional_default_groups | to_json }},
+    "group_search_pattern": {{ docker_graylog_ldap_group_search_pattern | to_json }}
+    }''
+    "http://admin:{{ docker_graylog_root_password }}@127.0.0.1:{{ docker_graylog_web_port }}/api/system/ldap/settings"'
+  changed_when: false
