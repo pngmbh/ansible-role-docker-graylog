@@ -20,6 +20,11 @@ Role Variables
 
 see [defaults/main.yml](defaults/main.yml)
 
+additional optional variables:
+
+* `docker_graylog_labels` - an array of docker labels, applied to the graylog
+  container
+
 Dependencies
 ------------
 
@@ -38,6 +43,8 @@ The following will install the server, and expose the webinterface to
   vars:
     docker_graylog_enable_web_host_port: true
     docker_graylog_enable_gelf_udp_host_port: true
+    docker_graylog_labels:
+      - "some.label.example.com=some value"
 ```
 
 Logging to that graylog server from a docker container can then be done by
