@@ -36,3 +36,6 @@
       - name: docker-compose
     docker_graylog_enable_web_host_port: true
     docker_graylog_enable_gelf_udp_host_port: true
+    docker_graylog_labels:
+      - "some.label.example.com=some value"
+      - "some.other.label.example.com=some other value"
