@@ -32,6 +32,11 @@
     - name: "{{ docker_graylog_es_image }}"
       tag: "{{ docker_graylog_es_tag }}"
 
+- name: Create docker network
+  docker_network:
+    name: "{{ docker_graylog_network }}"
+    state: present
+
 - name: Start graylog
   docker_service:
     state: present

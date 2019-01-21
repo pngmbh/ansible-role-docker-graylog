@@ -21,6 +21,8 @@ docker_graylog_web_port: 9000
 # publish the above port, if true
 docker_graylog_enable_web_host_port: false
 
+docker_graylog_network: graylog
+
 # optional LDAP authentication
 docker_graylog_enable_ldap: false
 docker_graylog_ldap_system_username: "uid=read_only,ou=myou,dc=mydc,dc=com"
