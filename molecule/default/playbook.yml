@@ -39,3 +39,4 @@
     docker_graylog_labels:
       - "some.label.example.com=some value"
       - "some.other.label.example.com=some other value"
+    docker_graylog_enable_ldap: true

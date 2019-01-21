@@ -20,3 +20,21 @@ docker_graylog_enable_gelf_udp_host_port: false
 docker_graylog_web_port: 9000
 # publish the above port, if true
 docker_graylog_enable_web_host_port: false
+
+# optional LDAP authentication
+docker_graylog_enable_ldap: false
+docker_graylog_ldap_system_username: "uid=read_only,ou=myou,dc=mydc,dc=com"
+docker_graylog_ldap_system_password: "password"
+docker_graylog_ldap_uri: "ldap://ldap.example.com:389/"
+docker_graylog_ldap_use_start_tls: false
+docker_graylog_ldap_trust_all_certificates: false
+docker_graylog_ldap_active_directory: false
+docker_graylog_ldap_search_base: "ou=myou,dc=mydc,dc=com"
+docker_graylog_ldap_search_pattern: "(&(objectClass=inetOrgPerson)(uid={0}))"
+docker_graylog_ldap_display_name_attribute: "cn"
+docker_graylog_ldap_default_group: "Reader"
+docker_graylog_ldap_group_mapping: {}
+docker_graylog_ldap_group_search_base: ""
+docker_graylog_ldap_group_id_attribute: ""
+docker_graylog_ldap_additional_default_groups: [ "Developer" ]
+docker_graylog_ldap_group_search_pattern: ""
