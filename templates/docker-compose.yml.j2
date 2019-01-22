@@ -1,8 +1,8 @@
 # {{ ansible_managed }}
-version: '2'
+version: '3'
 services:
   # MongoDB: https://hub.docker.com/_/mongo/
-  mongodb:
+  mongo:
     image: "{{ docker_graylog_mongo_image }}:{{ docker_graylog_mongo_tag }}"
     networks:
       - {{ docker_graylog_network }}
@@ -23,7 +23,7 @@ services:
       - xpack.ml.enabled=false
       - xpack.graph.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    mem_limit: 1g
+    # mem_limit: 1g
   # Graylog: https://hub.docker.com/r/graylog/graylog/
   graylog:
     image: "{{ docker_graylog_image }}:{{ docker_graylog_tag }}"
@@ -32,11 +32,8 @@ services:
     volumes:
       - "{{ docker_graylog_directory }}/gelf-udp-input.json:/usr/share/graylog/data/contentpacks/gelf-udp-input.json"
       - "{{ docker_graylog_directory }}/graylog.conf:/usr/share/graylog/data/config/graylog.conf"
-    links:
-      - mongodb:mongo
-      - elasticsearch
     depends_on:
-      - mongodb
+      - mongo
       - elasticsearch
 {% if docker_graylog_labels %}
     labels: {{ docker_graylog_labels | to_json }}

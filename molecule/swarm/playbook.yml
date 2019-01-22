@@ -1,0 +1,51 @@
+---
+- name: Prepare
+  hosts: all
+  roles:
+    - role: geerlingguy.repo-epel
+    - role: geerlingguy.pip
+    - role: geerlingguy.docker
+  tasks:
+    - name: Enable swarm mode
+      docker_swarm:
+        state: present
+  vars:
+    docker_package: "docker-{{ docker_edition }}"
+    docker_package_version: "17.03.2.ce-1.el7.centos"
+    docker_hosts:
+      - "unix:///var/run/docker.sock"
+    pip_install_packages:
+      - name: docker
+      - name: docker-compose
+- name: Converge
+  hosts: all
+  roles:
+    - role: docker-graylog
+  tasks:
+    - name: log something
+      docker_container:
+        name: test-logger
+        image: alpine
+        log_driver: gelf
+        log_options:
+          gelf-address: udp://127.0.0.1:12201
+        command: echo hello
+      changed_when: false
+    - name: check that the logged stuff arrived in graylog
+      uri:
+        url: http://admin:admin@127.0.0.1:9000/api/search/universal/relative?query=hello&range=6000&limit=1&decorate=true
+        method: GET
+        return_content: true
+        status_code: 200
+      register: result
+      until: result.json and result.json.total_results > 0
+      retries: 3
+      delay: 5
+  vars:
+    docker_graylog_use_swarm: true
+    docker_graylog_enable_web_host_port: true
+    docker_graylog_enable_gelf_udp_host_port: true
+    docker_graylog_labels:
+      - "some.label.example.com=some value"
+      - "some.other.label.example.com=some other value"
+    docker_graylog_enable_ldap: true
