@@ -1,4 +1,7 @@
 ---
+# uses docker-compose if false
+docker_graylog_use_swarm: false
+
 docker_graylog_directory: "/opt/docker-graylog"
 
 # versions

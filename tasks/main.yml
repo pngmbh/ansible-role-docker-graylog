@@ -32,23 +32,41 @@
     - name: "{{ docker_graylog_es_image }}"
       tag: "{{ docker_graylog_es_tag }}"
 
-- name: Create docker network
+- name: List docker networks
+  when: docker_graylog_use_swarm
+  command: "docker network ls"
+  register: docker_nets
+  changed_when: false
+
+- name: Create docker network (swarm)
+  when: docker_graylog_use_swarm and docker_graylog_network not in docker_nets.stdout
+  command: "docker network create --attachable --driver=overlay {{ docker_graylog_network }}"
+  args:
+    warn: false
+
+- name: Create docker network (non-swarm)
+  when: not docker_graylog_use_swarm
   docker_network:
     name: "{{ docker_graylog_network }}"
     state: present
 
-- name: Start graylog
+- name: Start graylog via docker-compose
+  when: not docker_graylog_use_swarm
   docker_service:
     state: present
     project_src: "{{ docker_graylog_directory }}"
 
+- name: Start graylog on swarm
+  when: docker_graylog_use_swarm
+  command: "docker stack deploy --compose-file={{ docker_graylog_directory }}/docker-compose.yml graylog"
+  changed_when: false
+
 - name: Wait for graylog to become healthy
-  shell: |
-    docker ps -a --filter "label=org.label-schema.name=Graylog Docker Image" \
-                 --format {%raw%}"{{.Status}}"{%endraw%} \
-      | grep -q '(healthy)'
-  register: healthy
-  until: healthy.rc == 0
+  command: |
+    docker ps -q --filter "label=org.label-schema.name=Graylog Docker Image" \
+                 --filter "health=healthy"
+  register: healthy_graylog
+  until: healthy_graylog.stdout != ""
   delay: 5
   retries: 20
   changed_when: false
@@ -58,7 +76,7 @@
   # This done from inside the graylog container just so that it works even when
   # the graylog api isn't published on a host port
   raw: '
-    docker exec -i docker-graylog_graylog_1
+    docker exec -i {{ healthy_graylog.stdout }}
     curl --fail -s -X PUT
     -H ''Content-Type: application/json''
     -H ''X-Requested-By: cli''
