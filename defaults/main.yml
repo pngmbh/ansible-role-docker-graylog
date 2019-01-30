@@ -24,6 +24,13 @@ docker_graylog_web_port: 9000
 # publish the above port, if true
 docker_graylog_enable_web_host_port: false
 
+# If you run graylog behind a loadbalancer, you'll need to set this
+# to the actual address of the API.
+# example value: "https://mygraylogserver.example.com/api/"
+docker_graylog_rest_transport_uri: false
+# (you probably don't need to change this)
+docker_graylog_rest_listen_uri: "http://0.0.0.0:9000/api/"
+
 docker_graylog_network: graylog
 
 # optional LDAP authentication
