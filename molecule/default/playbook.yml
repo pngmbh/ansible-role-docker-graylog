@@ -18,7 +18,10 @@
       changed_when: false
     - name: check that the logged stuff arrived in graylog
       uri:
-        url: http://admin:admin@127.0.0.1:9000/api/search/universal/relative?query=hello&range=6000&limit=1&decorate=true
+        url: >-
+          http://admin:admin@127.0.0.1:9000
+          /api/search/universal/relative
+          ?query=hello&range=6000&limit=1&decorate=true
         method: GET
         return_content: true
         status_code: 200
