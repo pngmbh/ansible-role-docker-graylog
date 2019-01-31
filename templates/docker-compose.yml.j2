@@ -1,5 +1,5 @@
 # {{ ansible_managed }}
-version: '3'
+version: '3.2'
 services:
   # MongoDB: https://hub.docker.com/_/mongo/
   mongo:
@@ -50,9 +50,14 @@ services:
       # - 514:514/udp
       # GELF TCP
       # - 12201:12201
-{% if docker_graylog_enable_gelf_udp_host_port %}
+{% if docker_graylog_enable_gelf_udp_host_port and (not docker_graylog_use_swarm) %}
       # GELF UDP
       - 12201:12201/udp
+{% elif docker_graylog_enable_gelf_udp_host_port and docker_graylog_use_swarm %}
+      - target: 12201
+        published: 12201
+        protocol: udp
+        mode: host
 {% endif %}
 {% endif %}
 
