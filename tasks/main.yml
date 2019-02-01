@@ -43,7 +43,6 @@
   command: "docker network create --attachable --driver=overlay {{ docker_graylog_network }}"
   args:
     warn: false
-  ignore_errors: true
 
 - name: Create docker network (non-swarm)
   when: not docker_graylog_use_swarm
@@ -67,7 +66,7 @@
     docker ps -q --filter "label=org.label-schema.name=Graylog Docker Image" \
                  --filter "health=healthy"
   register: healthy_graylog
-  until: healthy_graylog.stdout != ""
+  until: healthy_graylog.stdout
   delay: 5
   retries: 20
   changed_when: false

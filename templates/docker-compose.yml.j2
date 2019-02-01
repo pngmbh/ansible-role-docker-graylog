@@ -27,6 +27,8 @@ services:
   # Graylog: https://hub.docker.com/r/graylog/graylog/
   graylog:
     image: "{{ docker_graylog_image }}:{{ docker_graylog_tag }}"
+    logging:
+      driver: "json-file"
     networks:
       - {{ docker_graylog_network }}
     volumes:

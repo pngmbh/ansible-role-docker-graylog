@@ -1,5 +1,6 @@
 ---
 galaxy_info:
+  author: Richard Wossal
   description: role to install graylog for/via docker
   license:
     - BSD
