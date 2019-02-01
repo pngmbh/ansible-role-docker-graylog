@@ -43,6 +43,7 @@
   command: "docker network create --attachable --driver=overlay {{ docker_graylog_network }}"
   args:
     warn: false
+  ignore_errors: true
 
 - name: Create docker network (non-swarm)
   when: not docker_graylog_use_swarm
