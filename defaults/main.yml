@@ -48,5 +48,5 @@ docker_graylog_ldap_default_group: "Reader"
 docker_graylog_ldap_group_mapping: {}
 docker_graylog_ldap_group_search_base: ""
 docker_graylog_ldap_group_id_attribute: ""
-docker_graylog_ldap_additional_default_groups: [ "Developer" ]
+docker_graylog_ldap_additional_default_groups: []
 docker_graylog_ldap_group_search_pattern: ""
