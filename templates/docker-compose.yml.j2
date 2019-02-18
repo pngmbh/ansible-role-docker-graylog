@@ -6,6 +6,9 @@ services:
     image: "{{ docker_graylog_mongo_image }}:{{ docker_graylog_mongo_tag }}"
     networks:
       - {{ docker_graylog_network }}
+    volumes:
+      - graylog_mongo_data:/data/db
+      - graylog_mongo_configdb:/data/configdb
   # Elasticsearch: https://www.elastic.co/guide/en/elasticsearch/reference/6.x/docker.html
   elasticsearch:
     image: "{{ docker_graylog_es_image }}:{{ docker_graylog_es_tag}}"
@@ -32,6 +35,7 @@ services:
     networks:
       - {{ docker_graylog_network }}
     volumes:
+      - graylog_data:/usr/share/graylog/data
       - "{{ docker_graylog_directory }}/gelf-udp-input.json:/usr/share/graylog/data/contentpacks/gelf-udp-input.json"
       - "{{ docker_graylog_directory }}/graylog.conf:/usr/share/graylog/data/config/graylog.conf"
     depends_on:
@@ -66,3 +70,8 @@ services:
 networks:
   {{ docker_graylog_network }}:
     external: true
+
+volumes:
+  graylog_mongo_data:
+  graylog_mongo_configdb:
+  graylog_data:
