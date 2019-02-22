@@ -15,6 +15,14 @@
     - graylog.conf
     - docker-compose.yml
 
+- name: Enable Syslog UDP input
+  when: docker_graylog_enable_syslog_udp_input
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ docker_graylog_directory }}/{{ item }}"
+  with_list:
+    - syslog-udp-input.json
+
 - name: Render docker-compose config
   template:
     src: docker-compose.yml.j2

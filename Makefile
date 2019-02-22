@@ -11,4 +11,4 @@ test: build-testimage
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-w /tmp/${ROLENAME} \
 		${TESTIMAGENAME} \
-		sudo molecule test --all # --destroy=never # (for debugging)
+		sudo molecule test --scenario-name=swarm --destroy=never # (for debugging)

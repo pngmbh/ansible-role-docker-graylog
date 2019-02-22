@@ -17,12 +17,15 @@ docker_graylog_password_secret: "maicielesah3ohneumahtieNgah6zeighah9arookaa0Oht
 docker_graylog_root_password: "admin"
 
 # graylog config
+docker_graylog_enable_syslog_udp_input: false
+
 docker_graylog_gelf_udp_port: 12201
-# publish the above port, if true
-docker_graylog_enable_gelf_udp_host_port: false
+docker_graylog_syslog_udp_port: 541
 docker_graylog_web_port: 9000
-# publish the above port, if true
+
 docker_graylog_enable_web_host_port: false
+docker_graylog_enable_syslog_udp_host_port: false
+docker_graylog_enable_gelf_udp_host_port: false
 
 # If you run graylog behind a loadbalancer, you'll need to set this
 # to the actual address of the API.

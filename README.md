@@ -7,7 +7,7 @@ as a collection of Docker containers, using docker-compose.
 Limitations
 -----------
 
-Currently, this only supports the `gelf` log input via UDP.
+Currently, this only supports the `gelf` and `syslog` log inputs, both via UDP.
 
 Requirements
 ------------
