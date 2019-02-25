@@ -43,9 +43,10 @@
       delay: 5
     - name: log something via remote syslog
       docker_container:
-        name: test-logger
+        detach: false
+        name: test-logger-2
         image: alpine
-        command: apk add -U util-linux; logger -n `/sbin/ip route|awk '/default/ { print $3 }'` -P 123 "hellofromsyslog"
+        command: sh -c 'apk add -U util-linux; for i in `seq 10`; do logger -n `/sbin/ip route | cut -d " " -f 3` -P 123 "hellofromsyslog"; done'
       changed_when: false
     - name: check that the syslog stuff arrived in graylog
       uri:
@@ -60,7 +61,6 @@
   vars:
     docker_graylog_use_swarm: true
     docker_graylog_enable_web_host_port: true
-    docker_graylog_rest_transport_uri: "http://127.0.0.1:9000/api/"
     docker_graylog_gelf_udp_port: 12345
     docker_graylog_enable_gelf_udp_host_port: true
     docker_graylog_enable_syslog_udp_input: true
@@ -69,3 +69,4 @@
     docker_graylog_labels:
       - "some.label.example.com=some value"
       - "some.other.label.example.com=some other value"
+    docker_graylog_rest_transport_uri: "http://127.0.0.1:9000/api/"

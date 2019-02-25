@@ -70,7 +70,7 @@ services:
         protocol: udp
         mode: host
 {% else %}
-      - {{ docker_graylog_syslog_udp_port }}/{{ docker_graylog_syslog_udp_port }}/udp
+      - {{ docker_graylog_syslog_udp_port }}:{{ docker_graylog_syslog_udp_port }}/udp
 {% endif %}
 {% endif %}
 {% if docker_graylog_enable_gelf_udp_host_port %}
@@ -81,7 +81,7 @@ services:
         protocol: udp
         mode: host
 {% else %}
-      - {{ docker_graylog_gelf_udp_port }}/{{ docker_graylog_gelf_udp_port }}/udp
+      - {{ docker_graylog_gelf_udp_port }}:{{ docker_graylog_gelf_udp_port }}/udp
 {% endif %}
 {% endif %}
 {% endif %}
