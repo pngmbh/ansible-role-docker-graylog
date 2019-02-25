@@ -108,3 +108,45 @@
     }''
     "http://admin:{{ docker_graylog_root_password }}@127.0.0.1:{{ docker_graylog_web_port }}/api/system/ldap/settings"'
   changed_when: false
+
+- name: get default index set (for configuring the retention period in the next step)
+  raw: '
+    docker exec -i {{ healthy_graylog.stdout }}
+    curl --fail -s
+    -H ''Content-Type: application/json''
+    -H ''X-Requested-By: cli''
+    "http://admin:{{ docker_graylog_root_password }}@127.0.0.1:{{ docker_graylog_web_port }}/api/system/indices/index_sets?skip=0&limit=1"'
+  register: docker_graylog_index_set_response
+  changed_when: false
+
+- name: configure default index set retention period
+  raw: '
+    docker exec -i {{ healthy_graylog.stdout }}
+    curl --fail -s -X PUT
+    -H ''Content-Type: application/json''
+    -H ''X-Requested-By: cli''
+    -d ''{
+   "id": {{ (docker_graylog_index_set_response.stdout | from_json).index_sets[0].id | to_json }},
+   "title": "Default index set",
+   "description": "The Graylog default index set",
+   "index_prefix": "graylog",
+   "shards": 4,
+   "replicas": 0,
+   "rotation_strategy_class": "org.graylog2.indexer.rotation.strategies.TimeBasedRotationStrategy",
+   "rotation_strategy": {
+     "rotation_period": {{ docker_graylog_index_rotation_period | to_json }},
+     "type": "org.graylog2.indexer.rotation.strategies.TimeBasedRotationStrategyConfig"
+   },
+   "retention_strategy_class": "org.graylog2.indexer.retention.strategies.DeletionRetentionStrategy",
+   "retention_strategy": {
+     "max_number_of_indices": "{{ docker_graylog_index_max_number }}",
+     "type": "org.graylog2.indexer.retention.strategies.DeletionRetentionStrategyConfig"
+   },
+   "index_analyzer": "standard",
+   "index_optimization_max_num_segments": 1,
+   "index_optimization_disabled": false,
+   "writable": true,
+   "default": true
+    }''
+    "http://admin:{{ docker_graylog_root_password }}@127.0.0.1:{{ docker_graylog_web_port }}/api/system/indices/index_sets/{{ (docker_graylog_index_set_response.stdout | from_json).index_sets[0].id }}"'
+  changed_when: false

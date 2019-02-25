@@ -27,6 +27,9 @@ docker_graylog_enable_web_host_port: false
 docker_graylog_enable_syslog_udp_host_port: false
 docker_graylog_enable_gelf_udp_host_port: false
 
+docker_graylog_index_rotation_period: "P14D"
+docker_graylog_index_max_number: 5
+
 # If you run graylog behind a loadbalancer, you'll need to set this
 # to the actual address of the API.
 # example value: "https://mygraylogserver.example.com/api/"
