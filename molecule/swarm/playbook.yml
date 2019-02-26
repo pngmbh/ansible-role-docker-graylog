@@ -22,18 +22,35 @@
   roles:
     - role: docker-graylog
   tasks:
-    - name: log something
+    - name: log something via GELF
       docker_container:
         name: test-logger
         image: alpine
         log_driver: gelf
         log_options:
-          gelf-address: udp://127.0.0.1:12201
-        command: echo hello
+          gelf-address: udp://127.0.0.1:12345
+        command: echo hellofromgelf
       changed_when: false
-    - name: check that the logged stuff arrived in graylog
+    - name: check that the GELF stuff arrived in graylog
       uri:
-        url: http://admin:admin@127.0.0.1:9000/api/search/universal/relative?query=hello&range=6000&limit=1&decorate=true
+        url: http://admin:admin@127.0.0.1:9000/api/search/universal/relative?query=hellofromgelf&range=6000&limit=1&decorate=true
+        method: GET
+        return_content: true
+        status_code: 200
+      register: result
+      until: result.json and result.json.total_results > 0
+      retries: 3
+      delay: 5
+    - name: log something via remote syslog
+      docker_container:
+        detach: false
+        name: test-logger-2
+        image: alpine
+        command: sh -c 'apk add -U util-linux; for i in `seq 10`; do logger -n `/sbin/ip route | cut -d " " -f 3` -P 123 "hellofromsyslog"; done'
+      changed_when: false
+    - name: check that the syslog stuff arrived in graylog
+      uri:
+        url: http://admin:admin@127.0.0.1:9000/api/search/universal/relative?query=hellofromsyslog&range=6000&limit=1&decorate=true
         method: GET
         return_content: true
         status_code: 200
@@ -44,8 +61,12 @@
   vars:
     docker_graylog_use_swarm: true
     docker_graylog_enable_web_host_port: true
+    docker_graylog_gelf_udp_port: 12345
     docker_graylog_enable_gelf_udp_host_port: true
+    docker_graylog_enable_syslog_udp_input: true
+    docker_graylog_syslog_udp_port: 123
+    docker_graylog_enable_syslog_udp_host_port: true
     docker_graylog_labels:
       - "some.label.example.com=some value"
       - "some.other.label.example.com=some other value"
-    docker_graylog_enable_ldap: true
+    docker_graylog_rest_transport_uri: "http://127.0.0.1:9000/api/"

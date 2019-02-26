@@ -37,6 +37,9 @@ services:
     volumes:
       - graylog_data:/usr/share/graylog/data
       - "{{ docker_graylog_directory }}/gelf-udp-input.json:/usr/share/graylog/data/contentpacks/gelf-udp-input.json"
+{% if docker_graylog_enable_syslog_udp_input %}
+      - "{{ docker_graylog_directory }}/syslog-udp-input.json:/usr/share/graylog/data/contentpacks/syslog-udp-input.json"
+{% endif %}
       - "{{ docker_graylog_directory }}/graylog.conf:/usr/share/graylog/data/config/graylog.conf"
     depends_on:
       - mongo
@@ -44,26 +47,42 @@ services:
 {% if docker_graylog_labels %}
     labels: {{ docker_graylog_labels | to_json }}
 {% endif %}
-{% if docker_graylog_enable_web_host_port or docker_graylog_enable_gelf_udp_host_port %}
+{% if docker_graylog_enable_web_host_port
+   or docker_graylog_enable_gelf_udp_host_port
+   or docker_graylog_enable_syslog_udp_host_port %}
     ports:
 {% if docker_graylog_enable_web_host_port %}
       # Graylog web interface and REST API
-      - 9000:9000
+{% if docker_graylog_use_swarm %}
+      - target: {{ docker_graylog_web_port }}
+        published: {{ docker_graylog_web_port }}
+        protocol: tcp
+        mode: host
+{% else %}
+      - {{ docker_graylog_web_port }}:{{ docker_graylog_web_port }}
 {% endif %}
-      # Syslog TCP
-      # - 514:514
+{% endif %}
+{% if docker_graylog_enable_syslog_udp_host_port %}
       # Syslog UDP
-      # - 514:514/udp
-      # GELF TCP
-      # - 12201:12201
-{% if docker_graylog_enable_gelf_udp_host_port and (not docker_graylog_use_swarm) %}
-      # GELF UDP
-      - 12201:12201/udp
-{% elif docker_graylog_enable_gelf_udp_host_port and docker_graylog_use_swarm %}
-      - target: 12201
-        published: 12201
+{% if docker_graylog_use_swarm %}
+      - target: {{ docker_graylog_syslog_udp_port }}
+        published: {{ docker_graylog_syslog_udp_port }}
         protocol: udp
         mode: host
+{% else %}
+      - {{ docker_graylog_syslog_udp_port }}:{{ docker_graylog_syslog_udp_port }}/udp
+{% endif %}
+{% endif %}
+{% if docker_graylog_enable_gelf_udp_host_port %}
+      # GELF UDP
+{% if docker_graylog_use_swarm %}
+      - target: {{ docker_graylog_gelf_udp_port }}
+        published: {{ docker_graylog_gelf_udp_port }}
+        protocol: udp
+        mode: host
+{% else %}
+      - {{ docker_graylog_gelf_udp_port }}:{{ docker_graylog_gelf_udp_port }}/udp
+{% endif %}
 {% endif %}
 {% endif %}
 

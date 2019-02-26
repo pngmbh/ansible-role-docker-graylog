@@ -1,0 +1,25 @@
+{
+  "name":"UDP Syslog input on {{ docker_graylog_syslog_udp_port }}",
+  "description":"Adds a global UDP Syslog input",
+  "category":"Inputs",
+  "inputs":[
+    {
+      "title":"udp input",
+      "configuration":{
+        "override_source":null,
+        "recv_buffer_size":262144,
+        "bind_address":"0.0.0.0",
+        "port":{{ docker_graylog_syslog_udp_port }},
+        "decompress_size_limit":8388608
+      },
+      "static_fields":{},
+      "type":"org.graylog2.inputs.syslog.udp.SyslogUDPInput",
+      "global":true,
+      "extractors":[]
+    }
+  ],
+  "streams":[],
+  "outputs":[],
+  "dashboards":[],
+  "grok_patterns":[]
+}

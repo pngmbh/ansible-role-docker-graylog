@@ -18,10 +18,7 @@
       changed_when: false
     - name: check that the logged stuff arrived in graylog
       uri:
-        url: >-
-          http://admin:admin@127.0.0.1:9000
-          /api/search/universal/relative
-          ?query=hello&range=6000&limit=1&decorate=true
+        url: http://admin:admin@127.0.0.1:9000/api/search/universal/relative?query=hello&range=6000&limit=1&decorate=true
         method: GET
         return_content: true
         status_code: 200
@@ -38,8 +35,11 @@
       - name: docker
       - name: docker-compose
     docker_graylog_enable_web_host_port: true
+    docker_graylog_enable_syslog_udp_input: true
+    docker_graylog_enable_syslog_udp_host_port: true
     docker_graylog_enable_gelf_udp_host_port: true
     docker_graylog_labels:
       - "some.label.example.com=some value"
       - "some.other.label.example.com=some other value"
     docker_graylog_enable_ldap: true
+    docker_graylog_rest_transport_uri: "http://127.0.0.1:9000/api/"
