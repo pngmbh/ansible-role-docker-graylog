@@ -6,7 +6,7 @@ docker_graylog_directory: "/opt/docker-graylog"
 
 # versions
 docker_graylog_image: graylog/graylog
-docker_graylog_tag: 2.5
+docker_graylog_tag: 2.5.1-4
 docker_graylog_mongo_image: mongo
 docker_graylog_mongo_tag: 3
 docker_graylog_es_image: docker.elastic.co/elasticsearch/elasticsearch
