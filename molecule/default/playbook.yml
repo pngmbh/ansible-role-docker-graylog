@@ -26,6 +26,14 @@
       until: result.json and result.json.total_results > 0
       retries: 3
       delay: 5
+    - name: Install rsyslogd (for the following task)
+      package:
+        name: rsyslog
+        state: present
+    - name: Forward Syslog to Graylog
+      include_role:
+        name: docker-graylog
+        tasks_from: forward_syslog_to_graylog
   vars:
     docker_package: "docker-{{ docker_edition }}"
     docker_package_version: "17.03.2.ce-1.el7.centos"

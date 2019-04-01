@@ -1,3 +1,4 @@
+---
 # This task is not run by default, include it explicitly for the hosts that need it.
 - name: forward syslog to graylog
   blockinfile:
@@ -13,3 +14,5 @@
     name: rsyslog
     state: restarted
   when: rsyslog_config.changed
+  tags:
+    - skip_ansible_lint
