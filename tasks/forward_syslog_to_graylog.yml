@@ -1,0 +1,15 @@
+# This task is not run by default, include it explicitly for the hosts that need it.
+- name: forward syslog to graylog
+  blockinfile:
+    path: /etc/rsyslog.conf
+    insertafter: EOF
+    state: present
+    block: |
+      $PreserveFQDN on
+      *.* action(type="omfwd" target="{{ docker_graylog_rest_transport_uri | urlsplit("hostname") }}" port="{{ docker_graylog_syslog_udp_port }}" template="RSYSLOG_SyslogProtocol23Format" protocol="udp")
+  register: rsyslog_config
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+  when: rsyslog_config.changed
