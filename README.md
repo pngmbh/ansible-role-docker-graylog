@@ -37,14 +37,23 @@ The following will install the server, and expose the webinterface to
 `0.0.0.0:9000` on the host (login with `admin`/`admin`).
 
 ```yaml
-- hosts: servers
+- hosts: graylog-server
   roles:
     - role: docker-graylog
   vars:
     docker_graylog_enable_web_host_port: true
     docker_graylog_enable_gelf_udp_host_port: true
+    docker_graylog_enable_syslog_udp_input: true
+    docker_graylog_enable_syslog_udp_host_port: true
     docker_graylog_labels:
       - "some.label.example.com=some value"
+
+- hosts: other-servers
+  tasks:
+    - name: Forward Syslog to Graylog
+      include_role:
+        name: docker-graylog
+        tasks_from: forward_syslog_to_graylog
 ```
 
 Logging to that graylog server from a docker container can then be done by
